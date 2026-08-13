@@ -8,7 +8,12 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 builder.Services.AddControllers();
 
-var connectionString = builder.Configuration["DATABASE_URL"];
+var connectionString =
+    $"Host={Environment.GetEnvironmentVariable("PGHOST")};" +
+    $"Port={Environment.GetEnvironmentVariable("PGPORT")};" +
+    $"Database={Environment.GetEnvironmentVariable("PGDATABASE")};" +
+    $"Username={Environment.GetEnvironmentVariable("PGUSER")};" +
+    $"Password={Environment.GetEnvironmentVariable("PGPASSWORD")};";
 
 builder.Services.AddDbContext<WeatherContext>(options =>
     options.UseNpgsql(connectionString));
