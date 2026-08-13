@@ -15,10 +15,6 @@ builder.Services.AddDbContext<WeatherContext>(options =>
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
