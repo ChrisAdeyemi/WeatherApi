@@ -22,4 +22,10 @@ var app = builder.Build();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<WeatherContext>();
+    db.Database.EnsureCreated();
+}
+
 app.Run();
