@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path="railpack-plan.json" />
-  </Folder>
   <Project Path="../WeatherAPI.Tests/WeatherAPI.Tests.csproj" Id="183c71d4-48e5-4354-89fc-50a1b34ccca3" />
   <Project Path="WeatherAPI.csproj" />
 </Solution>
