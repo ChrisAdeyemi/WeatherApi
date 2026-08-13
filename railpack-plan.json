@@ -1,8 +1,10 @@
 {
-  "build": {
-    "command": "dotnet publish WeatherAPI/WeatherAPI.csproj -c Release -o out"
-  },
-  "start": {
-    "command": "dotnet out/WeatherAPI.dll"
+  "plan": {
+    "build": {
+      "command": "dotnet publish WeatherAPI/WeatherAPI.csproj -c Release -o out"
+    },
+    "start": {
+      "command": "dotnet out/WeatherAPI.dll"
+    }
   }
 }
