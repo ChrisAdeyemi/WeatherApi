@@ -4,11 +4,10 @@ using WeatherAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 builder.Services.AddControllers();
-
-builder.Services.AddOpenApi();
 
 var connectionString =
     $"Host={Environment.GetEnvironmentVariable("PGHOST")};" +
@@ -19,6 +18,8 @@ var connectionString =
 
 builder.Services.AddDbContext<WeatherContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
