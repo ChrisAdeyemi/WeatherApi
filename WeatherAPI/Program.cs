@@ -22,10 +22,12 @@ builder.Services.AddDbContext<WeatherContext>(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+app.MapOpenApi();
+
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
+    options.SwaggerEndpoint("/openapi/v1.json", "WeatherAPI v1");
+});
 
 app.MapControllers();
 
