@@ -9,17 +9,29 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 builder.Services.AddControllers();
 
-var connectionString =
-    $"Host={Environment.GetEnvironmentVariable("PGHOST")};" +
-    $"Port={Environment.GetEnvironmentVariable("PGPORT")};" +
-    $"Database={Environment.GetEnvironmentVariable("PGDATABASE")};" +
-    $"Username={Environment.GetEnvironmentVariable("PGUSER")};" +
-    $"Password={Environment.GetEnvironmentVariable("PGPASSWORD")};";
+builder.Services.AddOpenApi();
+
+string connectionString;
+
+if (builder.Environment.IsDevelopment())
+{
+    connectionString =
+        builder.Configuration.GetConnectionString("WeatherDatabase")
+        ?? throw new InvalidOperationException(
+            "Local PostgreSQL connection string not found.");
+}
+else
+{
+    connectionString =
+        $"Host={Environment.GetEnvironmentVariable("PGHOST")};" +
+        $"Port={Environment.GetEnvironmentVariable("PGPORT")};" +
+        $"Database={Environment.GetEnvironmentVariable("PGDATABASE")};" +
+        $"Username={Environment.GetEnvironmentVariable("PGUSER")};" +
+        $"Password={Environment.GetEnvironmentVariable("PGPASSWORD")};";
+}
 
 builder.Services.AddDbContext<WeatherContext>(options =>
     options.UseNpgsql(connectionString));
-
-builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
