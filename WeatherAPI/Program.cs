@@ -8,6 +8,8 @@ builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 builder.Services.AddControllers();
 
+builder.Services.AddOpenApi();
+
 var connectionString =
     $"Host={Environment.GetEnvironmentVariable("PGHOST")};" +
     $"Port={Environment.GetEnvironmentVariable("PGPORT")};" +
@@ -20,12 +22,11 @@ builder.Services.AddDbContext<WeatherContext>(options =>
 
 var app = builder.Build();
 
-app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
+if (app.Environment.IsDevelopment())
 {
-    var db = scope.ServiceProvider.GetRequiredService<WeatherContext>();
-    db.Database.EnsureCreated();
+    app.MapOpenApi();
 }
+
+app.MapControllers();
 
 app.Run();
