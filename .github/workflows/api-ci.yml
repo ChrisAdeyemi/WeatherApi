@@ -21,11 +21,17 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Restore dependencies
-        run: dotnet restore WeatherAPI/WeatherAPI.sln
+      - name: Restore API
+        run: dotnet restore WeatherAPI/WeatherAPI.csproj
 
-      - name: Build
-        run: dotnet build WeatherAPI/WeatherAPI.sln --configuration Release --no-restore
+      - name: Restore tests
+        run: dotnet restore WeatherAPI.Tests/WeatherAPI.Tests.csproj
+
+      - name: Build API
+        run: dotnet build WeatherAPI/WeatherAPI.csproj --configuration Release --no-restore
+
+      - name: Build tests
+        run: dotnet build WeatherAPI.Tests/WeatherAPI.Tests.csproj --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test WeatherAPI/WeatherAPI.sln --configuration Release --no-build
+        run: dotnet test WeatherAPI.Tests/WeatherAPI.Tests.csproj --configuration Release --no-build
