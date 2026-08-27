@@ -42,22 +42,12 @@ jobs:
           --no-build
           --collect:"XPlat Code Coverage"
           --results-directory ./TestResults
-          --logger "trx"
+          -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-      - name: Generate SonarQube coverage report
-        run: >
-          reportgenerator
-          -reports:"TestResults/**/coverage.cobertura.xml"
-          -targetdir:"TestResults/CoverageReport"
-          -reporttypes:"SonarQube"
-
-      - name: Check coverage report
+      - name: Find coverage report
         run: |
-          echo "Coverage reports:"
-          find TestResults -type f -print
+          echo "Coverage files found:"
+          find TestResults -type f -name "coverage.opencover.xml" -print
 
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarqube-scan-action@v7
@@ -67,6 +57,6 @@ jobs:
           args: >
             -Dsonar.organization=chrisadeyemi
             -Dsonar.projectKey=ChrisAdeyemi_WeatherApi
-            -Dsonar.cs.opencover.reportsPaths=TestResults/CoverageReport/SonarQube.xml
+            -Dsonar.cs.opencover.reportsPaths=TestResults/**/coverage.opencover.xml
             -Dsonar.tests=WeatherAPI.Tests
             -Dsonar.exclusions=**/bin/**,**/obj/**
