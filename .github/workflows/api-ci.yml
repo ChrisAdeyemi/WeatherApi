@@ -15,11 +15,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+
+      - name: Install dotnet-coverage
+        run: dotnet tool install --global dotnet-coverage
 
       - name: Restore API
         run: dotnet restore WeatherAPI/WeatherAPI.csproj
@@ -33,5 +38,29 @@ jobs:
       - name: Build tests
         run: dotnet build WeatherAPI.Tests/WeatherAPI.Tests.csproj --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test WeatherAPI.Tests/WeatherAPI.Tests.csproj --configuration Release --no-build
+      - name: Run tests with coverage
+        run: >
+          dotnet-coverage collect
+          "dotnet test WeatherAPI.Tests/WeatherAPI.Tests.csproj
+          --configuration Release
+          --no-build"
+          -f xml
+          -o coverage.xml
+
+      - name: Check coverage report
+        run: |
+          echo "Checking coverage report..."
+          ls -lh coverage.xml
+          head -c 1000 coverage.xml
+
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarqube-scan-action@v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=chrisadeyemi
+            -Dsonar.projectKey=ChrisAdeyemi_WeatherApi
+            -Dsonar.cs.vscoveragexml.reportsPaths=coverage.xml
+            -Dsonar.tests=WeatherAPI.Tests
