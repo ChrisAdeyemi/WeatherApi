@@ -26,8 +26,11 @@ jobs:
       - name: Install SonarScanner for .NET
         run: dotnet tool install --global dotnet-sonarscanner
 
+      - name: Install dotnet-coverage
+        run: dotnet tool install --global dotnet-coverage
+
       - name: Add .NET tools to PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+        run: echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
 
       - name: Restore API
         run: dotnet restore WeatherAPI/WeatherAPI.csproj
@@ -36,11 +39,13 @@ jobs:
         run: dotnet restore WeatherAPI.Tests/WeatherAPI.Tests.csproj
 
       - name: SonarCloud Begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           dotnet sonarscanner begin
           /k:"ChrisAdeyemi_WeatherApi"
           /o:"chrisadeyemi"
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.token="$SONAR_TOKEN"
           /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml"
           /d:sonar.host.url="https://sonarcloud.io"
 
@@ -49,9 +54,6 @@ jobs:
 
       - name: Build tests
         run: dotnet build WeatherAPI.Tests/WeatherAPI.Tests.csproj --configuration Release --no-restore
-
-      - name: Install dotnet-coverage
-        run: dotnet tool install --global dotnet-coverage
 
       - name: Run tests and generate coverage
         run: >
@@ -69,6 +71,8 @@ jobs:
           head -c 1000 coverage.xml
 
       - name: SonarCloud End
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
           dotnet sonarscanner end
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          /d:sonar.token="$SONAR_TOKEN"
